@@ -27,7 +27,6 @@ rm(list=ls())
 # library(htmltools)         # Load the htmltools package for working with HTML code in R
 # library(htmlwidgets)       # Load the htmlwidgets package for creating interactive widgets
 # library(shiny.fluent)      # Load the shiny.fluent package for creating Shiny applications with a Fluent Design style
-# # library(RMySQL)            # Load the RMySQL package for interfacing with MySQL databases from R
 # library(janitor)           # Load the janitor package for cleaning and formatting messy data
 # library(heatmaply)         # Load package for heat maps
 # library(mapboxer)
@@ -38,7 +37,7 @@ rm(list=ls())
 # library(openxlsx)         # load package for excel manipulations
 # library(xlsx)
 
-
+# library(RMySQL)            # Load the RMySQL package for interfacing with MySQL databases from R
 #source("helper_functions/convert_to_rds.R")
 
 #************************************************** 
@@ -89,14 +88,14 @@ shinyServer(function(input, output, session) {
   file_path <- "input_data/ahies_rds/"
 
   rds_identification <- readRDS(paste0(file_path, "identification.RDS")) %>% 
-    filter(idq0 == 2)
+    filter(idq0 == 3)
   
   #* *************************************************
   #* CASES 
   #* *************************************************
   rds_cases <- readRDS(paste0(file_path, "cases.RDS")) %>% 
     inner_join(rds_identification, by = c("id" = "case_id")) %>% 
-    filter(idq0 == 2)
+    filter(idq0 == 3)
   
   #* partial saves
   partial_saves <- rds_cases %>% 
@@ -132,7 +131,6 @@ shinyServer(function(input, output, session) {
   #* Meta Data 
   #* *************************************************
   rds_metadata <- readRDS(paste0(file_path,"metadata.RDS"))
-  # rds_metadata <- rds_metadata 
   #inner_join(rds_identification, by = "level_1_id")
   
   #***************************************************
@@ -234,7 +232,7 @@ shinyServer(function(input, output, session) {
     na.omit() %>% 
     mutate(start_date = as.character(strptime(paste0(v04, v03a), format = "%Y%m%d %H%M")), 
            end_date = as.character(strptime(paste0(v05, v03b), format = "%Y%m%d %H%M"))) %>% 
-    mutate(interview_time = round(difftime(end_date, start_date, units = 'mins'), digits = 1))
+    mutate(interview_time = round(difftime(end_date, start_date, units = 'days'), digits = 1))
 
   # mean interview time - all interviews
   df_mean_interview_time <- df_interview_time %>% na.omit()
@@ -243,7 +241,7 @@ shinyServer(function(input, output, session) {
   # mean interview time - by team
   df_interview_time_by_team <- df_interview_time %>%
     na.omit() %>% 
-    mutate(interview_time = difftime(end_date, start_date, units = 'mins')) %>% 
+    mutate(interview_time = difftime(end_date, start_date, units = 'days')) %>% 
     group_by(id00) %>%
     summarize(mean_interview_time = round(mean(interview_time), digits = 1),
               min_interview_time = round(min(interview_time), digits = 1),
@@ -1226,7 +1224,7 @@ shinyServer(function(input, output, session) {
   last_sync_by_supervisor <- rds_metadata %>% 
     select(id00, v02, v03b, v05) %>% 
     mutate(interview_end_date = as.character(strptime(paste0(v05, v03b), format = "%Y%m%d %H%M"))) %>%
-    mutate(last_sync = as.integer(difftime(cur_date, interview_end_date, units = 'mins'))) %>%
+    mutate(last_sync = as.integer(difftime(cur_date, interview_end_date, units = 'days'))) %>%
     na.omit() %>% 
     group_by(id00, v02) %>% 
     summarize(last_sync = as.integer(min(last_sync))) %>%
@@ -1239,7 +1237,7 @@ shinyServer(function(input, output, session) {
   last_sync_by_enumerator <- rds_metadata %>% 
     select(id00, v01c, v03b, v05) %>% 
     mutate(interview_end_date = as.character(strptime(paste0(v05, v03b), format = "%Y%m%d %H%M"))) %>%
-    mutate(last_sync = as.integer(difftime(cur_date, interview_end_date, units = 'mins'))) %>%
+    mutate(last_sync = as.integer(difftime(cur_date, interview_end_date, units = 'days'))) %>%
     na.omit() %>% 
     group_by(id00, v01c) %>% 
     summarize(last_sync = as.integer(min(last_sync))) %>%
@@ -1619,7 +1617,7 @@ shinyServer(function(input, output, session) {
   # current_1####
   df_hh_completion <- rds_metadata %>% 
     select(id00, id01, idq0, final_confirmation) %>% 
-    filter(final_confirmation == 1, idq0 == 2) %>% 
+    filter(final_confirmation == 1, idq0 == 3) %>% 
     group_by(id00, id01) %>% 
     summarize(count = n()) %>% 
     ungroup()
@@ -4646,7 +4644,7 @@ shinyServer(function(input, output, session) {
 #   #select(`id00`, `idq0`, `id01.y`, `id02`) %>%
 #   collect() %>%
 #   janitor::clean_names() %>% 
-#   filter(idq0 == 2) #QUARTER 2
+#   filter(idq0 == 3) #QUARTER 2
 # 
 # #* save and read dataframe as RDS
 # saveRDS(df_identification, file = "input_data/identification.RDS")

@@ -40,7 +40,7 @@ convertRDS <- function() {
     #select(`id00`, `idq0`, `id01`, `id02`) %>%
     collect() %>%
     janitor::clean_names() %>%
-    filter(idq0 == 2) #QUARTER 2
+    filter(idq0 == 3) #QUARTER 2
   
   # #* save and read dataframe as RDS
   saveRDS(df_identification, file = paste0(rds_data_path, "identification.RDS"))
