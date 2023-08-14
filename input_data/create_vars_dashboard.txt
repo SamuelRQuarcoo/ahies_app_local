@@ -1,0 +1,12 @@
+no. of hholds enumerated
+number of households enumerated in last 3 days
+number of individuals in enumeration data
+number of partial saves
+average household size in enumeration data
+Data for number of different EAs
+Number of enumetators for which data was received in the last 24h
+Number of EAs for which data was received in the last 24h
+Number of duplicate cases
+percentage of structures with male-only households(more than 4 members)
+percentage of structures with female-only households(more than 4 members)
+percentage of single member households
